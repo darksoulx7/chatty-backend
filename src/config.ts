@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import bunyan from 'bunyan';
+import path from 'path';
 
-dotenv.config({});
+dotenv.config({ path: path.resolve(`${__dirname}/../.env`) });
 
 class Config {
     public MONGO_URL: string | undefined;
