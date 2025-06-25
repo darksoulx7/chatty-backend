@@ -1,5 +1,6 @@
 import HTTP_STATUS from 'http-status-codes';
 
+// Shape of an error returned to the client
 export interface IErrorResponse {
     message: string;
     statusCode: number;
@@ -7,12 +8,15 @@ export interface IErrorResponse {
     serializeErrors(): IError;
 }
 
+// Simple representation used inside CustomError classes
 export interface IError {
     message: string;
     statusCode: number;
     status: string;
 }
 
+// Base class used to build application specific errors. Each error type
+// specifies an HTTP status code and can be serialized for the client.
 export abstract class CustomError extends Error {
     abstract statusCode: number;
     abstract status: string;
@@ -30,6 +34,7 @@ export abstract class CustomError extends Error {
     }
 }
 
+// Thrown when a request fails Joi validation
 export class JoiRequestValidationError extends CustomError {
     statusCode = HTTP_STATUS.BAD_REQUEST;
     status = 'error';
@@ -38,6 +43,7 @@ export class JoiRequestValidationError extends CustomError {
         super(message);
     }
 }
+// General 400 error for invalid requests
 export class BadRequestError extends CustomError {
     statusCode = HTTP_STATUS.BAD_REQUEST;
     status = 'error';
@@ -47,6 +53,7 @@ export class BadRequestError extends CustomError {
     }
 }
 
+// Used when a requested resource cannot be located
 export class NotFound extends CustomError {
     statusCode = HTTP_STATUS.NOT_FOUND;
     status = 'error';
@@ -56,6 +63,7 @@ export class NotFound extends CustomError {
     }
 }
 
+// Indicates the user is not authenticated to perform the action
 export class NotAuthorizedError extends CustomError {
     statusCode = HTTP_STATUS.UNAUTHORIZED;
     status = 'error';
@@ -65,6 +73,7 @@ export class NotAuthorizedError extends CustomError {
     }
 }
 
+// Uploaded file exceeded allowed size limits
 export class FileTooLargeError extends CustomError {
     statusCode = HTTP_STATUS.REQUEST_TOO_LONG;
     status = 'error';
@@ -74,6 +83,7 @@ export class FileTooLargeError extends CustomError {
     }
 }
 
+// Fallback for unexpected server side errors
 export class ServerError extends CustomError {
     statusCode = HTTP_STATUS.SERVICE_UNAVAILABLE;
     status = 'error';
