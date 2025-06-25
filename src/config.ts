@@ -2,8 +2,12 @@ import dotenv from 'dotenv';
 import bunyan from 'bunyan';
 import path from 'path';
 
+// Load environment variables from '../.env' so configuration is centralized
+// outside the compiled build.
 dotenv.config({ path: path.resolve(`${__dirname}/../.env`) });
 
+// Holds configuration values pulled from environment variables. By keeping them
+// in one place we avoid scattering `process.env` throughout the codebase.
 class Config {
     public MONGO_URL: string | undefined;
     public NODE_ENV: string | undefined;
@@ -26,10 +30,12 @@ class Config {
     }
 
     public createLogger(name: string): bunyan {
+        // Create a bunyan logger with the provided name so logs share the same format
         return bunyan.createLogger({ name, level: 'debug' });
     }
 
     public validateConfig(): void {
+        // Ensure all required environment variables are present at startup.
         for (const [key, value] of Object.entries(this)) {
             if (value === undefined) {
                 throw new Error(`Configuration ${key} is undefined`);
